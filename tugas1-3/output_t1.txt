@@ -1,0 +1,49 @@
+=== Dasar (assignment) ===
+x = 1
+Pohon S-expression:
+(module (expression_statement (assignment left: (identifier) right: (integer))))
+
+=== Potongan 1: Fungsi ===
+def sapa(nama):
+    return nama
+Pohon S-expression:
+(module (function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (return_statement (identifier)))))
+
+=== Potongan 2: if/else ===
+if x > 0:
+    y = 1
+else:
+    y = 2
+Pohon S-expression:
+(module (if_statement condition: (comparison_operator (identifier) (integer)) consequence: (block (expression_statement (assignment left: (identifier) right: (integer)))) alternative: (else_clause body: (block (expression_statement (assignment left: (identifier) right: (integer)))))))
+
+=== Potongan 3: Kelas dengan 1 method ===
+class Kucing:
+    def suara(self):
+        return "meong"
+Pohon S-expression:
+(module (class_definition name: (identifier) body: (block (function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (return_statement (string (string_start) (string_content) (string_end))))))))
+
+=== Inspeksi Node Bernama vs Anonim (Potongan 1: Fungsi) ===
+Child langsung dari function_definition (children):
+  'def'                -> anonim
+  'identifier'         -> bernama
+  'parameters'         -> bernama
+  ':'                  -> anonim
+  'block'              -> bernama
+
+Child di dalam parameters (satu tingkat lebih dalam):
+  '('                  -> anonim
+  'identifier'         -> bernama
+  ')'                  -> anonim
+
+Perbandingan children vs named_children pada function_definition:
+  len(children)      : 5 ['def', 'identifier', 'parameters', ':', 'block']
+  len(named_children): 3 ['identifier', 'parameters', 'block']
+
+=== Uji Error Recovery ===
+1. Hapus ':' setelah def sapa(nama):
+(module (ERROR (identifier) (parameters (identifier)) (identifier)))
+
+2. Hapus ')' pada parameter fungsi:
+(module (ERROR (identifier) (identifier)) (return_statement (identifier)))
