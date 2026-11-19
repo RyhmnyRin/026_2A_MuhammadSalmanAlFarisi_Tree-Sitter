@@ -1,0 +1,51 @@
+=== Query 0 (semua.scm pada kecil.py) ===
+@id  baris 1: x
+
+=== Query 1: Fungsi & jumlah parameter (fungsi.scm pada sampel_100baris.py) ===
+__init__ (baris 10): 5 parameter
+ringkasan (baris 17): 1 parameter
+tutup (baris 20): 2 parameter
+buat_tiket_awal (baris 28): 0 parameter
+hitung_berdasarkan_status (baris 38): 2 parameter
+cari_prioritas_tinggi (baris 46): 2 parameter
+urutkan_tiket (baris 54): 2 parameter
+simpan_ke_json (baris 60): 2 parameter
+muat_dari_json (baris 74): 1 parameter
+cetak_laporan (baris 92): 1 parameter
+jalankan_demo (baris 102): 0 parameter
+
+=== Query 2: Pemanggilan print(...) (print.scm pada sampel_100baris.py) ===
+@fn  baris 23: print
+@fn  baris 25: print
+@fn  baris 71: print
+@fn  baris 77: print
+@fn  baris 93: print
+@fn  baris 94: print
+@fn  baris 95: print
+@fn  baris 96: print
+@fn  baris 97: print
+@fn  baris 99: print
+@fn  baris 104: print
+@fn  baris 107: print
+@args  baris 23: (f"Tiket {self.kode} ditutup: {catatan}")
+@args  baris 25: (f"Tiket {self.kode} ditutup.")
+@args  baris 71: (f"Data tersimpan ke {path_tujuan}")
+@args  baris 77: ("File belum ditemukan, membuat daftar kosong.")
+@args  baris 93: ("=== Laporan Tiket ===")
+@args  baris 94: ("Total tiket:", len(daftar_tiket))
+@args  baris 95: ("Open:", hitung_berdasarkan_status(daftar_tiket, "open"))
+@args  baris 96: ("Pending:", hitung_berdasarkan_status(daftar_tiket, "pending"))
+@args  baris 97: ("Closed:", hitung_berdasarkan_status(daftar_tiket, "closed"))
+@args  baris 99: (" -", tiket.ringkasan())
+@args  baris 104: ("Direktori kerja:", folder)
+@args  baris 107: ("Jumlah tiket kritis:", len(kritis))
+
+=== Query 3: Daftar modul import (import.scm pada sampel_100baris.py) ===
+@modul_import  baris 1: os
+@modul_import  baris 2: json
+@modul_from  baris 3: pathlib
+@modul_from  baris 4: datetime
+
+=== Query 3b: Uji aliased import (import.scm pada t1.py) ===
+@modul_import  baris 1: tree_sitter_python
+@modul_from  baris 2: tree_sitter
