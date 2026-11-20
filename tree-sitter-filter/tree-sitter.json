@@ -1,0 +1,39 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "filter",
+      "camelcase": "Filter",
+      "title": "Filter",
+      "scope": "source.filter",
+      "file-types": [
+        "filter"
+      ],
+      "injection-regex": "^filter$",
+      "class-name": "TreeSitterFilter"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "DSL filter grammar",
+    "authors": [
+      {
+        "name": "Muhammad Salman Al Farisi"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/RyhmnyRin/026_2A_MuhammadSalmanAlFarisi_Tree-Sitter"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": false,
+    "java": false,
+    "node": true,
+    "python": true,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}
