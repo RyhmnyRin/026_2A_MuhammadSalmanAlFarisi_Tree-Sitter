@@ -27,8 +27,27 @@
   - **Node anonim yang tersembunyi dari S-expression**: `'def'`, `':'`, serta `'('` dan `')'` di dalam node `parameters`.
 - **Error Recovery**:
   - Ketika `:` dihapus (`def sapa(nama)`), parser tetap menghasilkan pohon dengan menyisipkan node `(ERROR (identifier) (parameters (identifier)) (identifier))`. Saat `)` dihapus, bagian parameter yang rusak dibungkus dalam `(ERROR (identifier) (identifier))` sementara `(return_statement (identifier))` setelahnya tetap berhasil dikenali.
-- **Tangkapan Layar Hasil Tugas 1**:
-  - ![Hasil Tugas 1](screenshots/tugas1.png)
+- **Output Eksekusi Tugas 1 (`python tugas1-3/t1.py`, lengkapnya di `tugas1-3/output_t1.txt`)**:
+  ```text
+  === Potongan 1: Fungsi ===
+  (module (function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (return_statement (identifier)))))
+
+  === Potongan 2: if/else ===
+  (module (if_statement condition: (comparison_operator (identifier) (integer)) consequence: (block (expression_statement (assignment left: (identifier) right: (integer)))) alternative: (else_clause body: (block (expression_statement (assignment left: (identifier) right: (integer)))))))
+
+  === Potongan 3: Kelas dengan 1 method ===
+  (module (class_definition name: (identifier) body: (block (function_definition name: (identifier) parameters: (parameters (identifier)) body: (block (return_statement (string (string_start) (string_content) (string_end))))))))
+
+  Perbandingan children vs named_children pada function_definition:
+    len(children)      : 5 ['def', 'identifier', 'parameters', ':', 'block']
+    len(named_children): 3 ['identifier', 'parameters', 'block']
+
+  === Uji Error Recovery ===
+  1. Hapus ':' setelah def sapa(nama):
+  (module (ERROR (identifier) (parameters (identifier)) (identifier)))
+  2. Hapus ')' pada parameter fungsi:
+  (module (ERROR (identifier) (identifier)) (return_statement (identifier)))
+  ```
 
 ---
 
@@ -37,8 +56,29 @@
 - **Hasil Uji**:
   - Pada `kecil.py` (`x = 1`), output tercetak sesuai spesifikasi modul (`module [1:0]` -> `expression_statement` -> `assignment` -> `left: identifier [1:0]` & `right: integer [1:4]`).
   - Pada `sampel_100baris.py` (**114 baris** kode Python nyata), `jelajah.py` menghasilkan **712 baris** pohon node bernama lengkap di `tugas1-3/output_jelajah.txt`.
-- **Tangkapan Layar Hasil Tugas 2**:
-  - ![Hasil Tugas 2](screenshots/tugas2.png)
+- **Output Eksekusi Tugas 2 (`python tugas1-3/jelajah.py`, lengkapnya di `tugas1-3/output_jelajah.txt`)**:
+  ```text
+  # 1. Uji pada kecil.py (x = 1)
+  module [1:0]
+    expression_statement [1:0]
+      assignment [1:0]
+        left: identifier [1:0]
+        right: integer [1:4]
+
+  # 2. Cuplikan uji pada sampel_100baris.py (114 baris kode -> 712 baris output pohon)
+  module [1:0]
+    import_statement [1:0]
+      name: dotted_name [1:7]
+        identifier [1:7]
+    import_from_statement [3:0]
+      module_name: dotted_name [3:5]
+        identifier [3:5]
+      name: dotted_name [3:20]
+        identifier [3:20]
+    class_definition [7:0]
+      name: identifier [7:6]
+      body: block [8:4]
+  ```
 
 ---
 
@@ -48,8 +88,27 @@
   1. **Query 1 (`fungsi.scm`)**: Menemukan seluruh **11 fungsi/method** beserta jumlah parameternya (`__init__`: 5, `ringkasan`: 1, `tutup`: 2, `buat_tiket_awal`: 0, `hitung_berdasarkan_status`: 2, `cari_prioritas_tinggi`: 2, `urutkan_tiket`: 2, `simpan_ke_json`: 2, `muat_dari_json`: 1, `cetak_laporan`: 1, `jalankan_demo`: 0) — cocok 100% dengan hitungan manual.
   2. **Query 2 (`print.scm`)**: Menemukan seluruh **12 pemanggilan `print(...)`** menggunakan predikat `(#eq? @fn "print")`.
   3. **Query 3 (`import.scm`)**: Berdasarkan hasil inspeksi `jelajah.py`, dibuat pola untuk `import_statement` (baik `dotted_name` langsung maupun `aliased_import`) dan `import_from_statement` (`module_name: (dotted_name)`). Terdeteksi tepat **4 modul** di `sampel_100baris.py` (`os`, `json`, `pathlib`, `datetime`) dan **2 modul** di `t1.py` (`tree_sitter_python`, `tree_sitter`).
-- **Tangkapan Layar Hasil Tugas 3**:
-  - ![Hasil Tugas 3](screenshots/tugas3.png)
+- **Output Eksekusi Tugas 3 (`python tugas1-3/q.py`, lengkapnya di `tugas1-3/output_t3.txt`)**:
+  ```text
+  === Query 1: Fungsi & jumlah parameter (fungsi.scm pada sampel_100baris.py) ===
+  __init__ (baris 10): 5 parameter
+  ringkasan (baris 17): 1 parameter
+  tutup (baris 20): 2 parameter
+  buat_tiket_awal (baris 28): 0 parameter
+  ... (total 11 fungsi terdeteksi)
+
+  === Query 2: Pemanggilan print(...) (print.scm pada sampel_100baris.py) ===
+  @fn  baris 23: print  | @args: (f"Tiket {self.kode} ditutup: {catatan}")
+  @fn  baris 25: print  | @args: (f"Tiket {self.kode} ditutup.")
+  ... (total 12 pemanggilan print terdeteksi)
+
+  === Query 3: Daftar modul import (import.scm pada sampel_100baris.py & t1.py) ===
+  @modul_import  baris 1: os
+  @modul_import  baris 2: json
+  @modul_from    baris 3: pathlib
+  @modul_from    baris 4: datetime
+  @modul_import  baris 1 (t1.py): tree_sitter_python
+  ```
 
 ---
 
@@ -59,16 +118,42 @@
   - **Prioritas Operator**: `not_expression` (`prec 3`) > `and_expression` (`prec.left 2`) > `or_expression` (`prec.left 1`), sehingga `a = 1 or b = 2 and c = 3` mengelompok sebagai `a = 1 or (b = 2 and c = 3)`.
 - **Hasil Pengujian (`tree-sitter test`)**:
   - Seluruh **8 kasus uji corpus** di `test/corpus/dasar.txt` lulus **100.00%** (mencakup string, number, boolean, prioritas `and`/`or`, tanda kurung, `not`, `in_expression` dengan 3 nilai, dan `contains`).
-- **Tangkapan Layar Hasil Tugas 4**:
-  - ![Hasil Tugas 4](screenshots/tugas4.png)
+- **Output Eksekusi Tugas 4 (`tree-sitter test` & `tree-sitter parse contoh.filter`)**:
+  ```text
+    dasar:
+        1. ✓ perbandingan string dasar
+        2. ✓ perbandingan angka dengan >=
+        3. ✓ ekspresi and dasar
+        4. ✓ prioritas and lebih kuat dari or
+        5. ✓ ekspresi tanda kurung mengubah prioritas
+        6. ✓ ekspresi not dan boolean
+        7. ✓ ekspresi in dengan tiga nilai
+        8. ✓ operator contains untuk pencarian teks
+
+  Total parses: 8; successful parses: 8; failed parses: 0; success percentage: 100.00%
+  ```
 
 ---
 
 ### Tugas 5 — Highlight untuk DSL Filter (`tree-sitter-filter/queries/highlights.scm`)
 - **Konfigurasi**: Menjalankan `tree-sitter init-config` dan mendaftarkan folder induk `026_2A_MuhammadSalmanAlFarisi_Tree-Sitter` pada `parser-directories` di `config.json`. Di `tree-sitter.json`, diatur `"file-types": ["filter"]` dan `"highlights": "queries/highlights.scm"`.
 - **Pola Highlight**: Menangkap kata kunci `["and" "or" "not" "in" "contains"] @keyword`, operator `["=" "!=" ">" "<" ">=" "<="] @operator`, literal `(string) @string`, `(number) @number`, `(boolean) @constant.builtin`, serta nama field `(comparison field: (identifier) @property)` dan `(in_expression field: (identifier) @property)`.
-- **Tangkapan Layar Hasil Tugas 5**:
-  - ![Hasil Tugas 5](screenshots/tugas5.png)
+- **Output Eksekusi Tugas 5 (`tree-sitter query` & `tree-sitter highlight --check contoh.filter`)**:
+  ```text
+  $ tree-sitter highlight --check contoh.filter
+  All highlight captures conform to standards.
+
+  $ tree-sitter query queries/highlights.scm contoh.filter
+  contoh.filter
+    capture: 5 - property,         text: `status`
+    capture: 0 - keyword,          text: `in`
+    capture: 2 - string,           text: `"open"`, `"pending"`, `"closed"`
+    capture: 0 - keyword,          text: `and`, `or`, `contains`, `not`
+    capture: 5 - property,         text: `priority`, `title`, `archived`
+    capture: 1 - operator,         text: `>=`, `=`
+    capture: 3 - number,           text: `2`
+    capture: 4 - constant.builtin, text: `true`
+  ```
 
 ---
 
@@ -80,8 +165,17 @@
 - **Uji pada Repositori Open Source Nyata (`psf/requests`) & Verifikasi Manual 2 File Acak**:
   1. **`src/requests/api.py`**: Dilaporkan `baris 24: fungsi 'request' terlalu panjang (48 baris)`. Dicek manual: `def request` berada di baris 24–71 (`71 - 24 + 1 = 48 baris`, cocok).
   2. **`src/requests/adapters.py`**: Dilaporkan `baris 715: # TODO: Remove this in 3.0.0: see #2811` dan `baris 85: fungsi '_urllib3_request_context' terlalu panjang (35 baris)`. Dicek manual: komentar `# TODO` tepat di baris 715, dan fungsi `_urllib3_request_context` berada di baris 85–119 (`119 - 85 + 1 = 35 baris`, cocok).
-- **Tangkapan Layar Hasil Tugas 6**:
-  - ![Hasil Tugas 6](screenshots/tugas6.png)
+- **Output Eksekusi Tugas 6 (`python cek/cek.py ../repo_uji_requests`)**:
+  ```text
+  repo_uji_requests\tests\test_testserver.py:97: # TODO: figure out why this sometimes fails when using pytest-xdist.
+  repo_uji_requests\src\requests\adapters.py:715: # TODO: Remove this in 3.0.0: see #2811
+  repo_uji_requests\src\requests\adapters.py:85: fungsi '_urllib3_request_context' terlalu panjang (35 baris)
+  repo_uji_requests\src\requests\adapters.py:634: fungsi 'send' terlalu panjang (115 baris)
+  repo_uji_requests\src\requests\api.py:24: fungsi 'request' terlalu panjang (48 baris)
+  repo_uji_requests\src\requests\hooks.py:29: # TODO: response is the only one
+  repo_uji_requests\src\requests\models.py:687: # TODO: can be fixed by flipping the conditionals
+  repo_uji_requests\src\requests\sessions.py:186: fungsi 'resolve_redirects' terlalu panjang (122 baris)
+  ```
 
 ---
 
