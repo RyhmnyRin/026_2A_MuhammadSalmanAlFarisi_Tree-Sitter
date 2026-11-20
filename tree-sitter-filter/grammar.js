@@ -16,6 +16,7 @@ export default grammar({
     query: $ => $._expr,
     _expr: $ => choice(
       $.comparison,
+      $.in_expression,
       $.and_expression,
       $.or_expression,
       $.not_expression,
@@ -23,8 +24,16 @@ export default grammar({
     ),
     comparison: $ => seq(
       field("field", $.identifier),
-      field("operator", choice("=", "!=", ">", "<", ">=", "<=")),
+      field("operator", choice("=", "!=", ">", "<", ">=", "<=", "contains")),
       field("value", $._value),
+    ),
+    in_expression: $ => seq(
+      field("field", $.identifier),
+      "in",
+      "(",
+      $._value,
+      repeat(seq(",", $._value)),
+      ")",
     ),
     or_expression: $ => prec.left(1, seq(field("left", $._expr), "or", field("right", $._expr))),
     and_expression: $ => prec.left(2, seq(field("left", $._expr), "and", field("right", $._expr))),
