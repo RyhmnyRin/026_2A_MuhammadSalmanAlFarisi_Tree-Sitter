@@ -83,3 +83,17 @@ ekspresi tanda kurung mengubah prioritas
     (comparison
       (identifier)
       (number))))
+
+==================
+ekspresi not dan boolean
+==================
+
+not archived = true
+
+---
+
+(query
+  (not_expression
+    (comparison
+      (identifier)
+      (boolean))))
